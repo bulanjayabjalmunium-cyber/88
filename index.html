@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART TOKO - Aluminium Edition</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f8fafc; color: #2c3e50; }
+        
+        /* HALAMAN LOGIN DENGAN GAMBAR */
+        .login-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        .login-banner { flex: 1; background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat; display: flex; flex-direction: column; justify-content: flex-end; padding: 60px; color: white; }
+        .login-banner h1 { font-size: 38px; font-weight: 700; margin-bottom: 15px; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .login-banner p { font-size: 16px; color: #cbd5e1; max-width: 450px; line-height: 1.5; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        
+        .login-form-side { width: 480px; background: #ffffff; display: flex; justify-content: center; align-items: center; padding: 40px; box-shadow: -10px 0 30px rgba(0,0,0,0.05); z-index: 10; }
+        .login-box { width: 100%; max-width: 360px; }
+        .login-logo { font-size: 45px; margin-bottom: 15px; background: #e0f2fe; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 14px; color: #0284c7; }
+        .login-box h2 { color: #0f172a; font-size: 26px; margin-bottom: 5px; }
+        .login-box .subtitle { color: #64748b; font-size: 12px; margin-bottom: 30px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+        .login-box label { display: block; margin-top: 15px; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #334155; }
+        .login-box input { width: 100%; padding: 13px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; outline: none; transition: all 0.2s; }
+        .login-box input:focus { border-color: #0284c7; background: #fff; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1); }
+        
+        /* APLIKASI UTAMA */
+        .app { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); color: white; padding: 25px 15px; position: fixed; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar-brand h2 { text-align: center; font-size: 22px; color: #f8fafc; }
+        .sidebar-brand p { text-align: center; color: #38bdf8; font-size: 11px; margin-top: 2px; text-transform: uppercase; margin-bottom: 30px; }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+        .sidebar button { width: 100%; border: none; background: transparent; color: #94a3b8; padding: 13px 15px; text-align: left; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+        .sidebar button:hover { background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+        .btn-logout { color: #f87171 !important; background: rgba(239, 68, 68, 0.05) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
+        .content { margin-left: 260px; padding: 35px; width: calc(100% - 260px); background: #f8fafc; min-height: 100vh; }
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card { background: #ffffff; padding: 25px; border-radius: 12px; display: flex; align-items: center; gap: 20px; border: 1px solid #cbd5e1; border-left: 5px solid #0284c7; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .card-icon { font-size: 32px; background: #e0f2fe; padding: 12px; border-radius: 10px; }
+        .card p { color: #64748b; font-size: 13px; margin-bottom: 5px; }
+        .card h3 { font-size: 24px; color: #0f172a; }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .btn-primary { background: #0284c7; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
+        .btn-primary:hover { background: #0369a1; }
+        
+        .table-container { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px; border-bottom: 1px solid #f1f5f9; text-align: left; font-size: 14px; }
+        th { background: #f8fafc; color: #475569; }
+        
+        .form-box { background: white; max-width: 600px; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .form-box label { display: block; margin-top: 15px; margin-bottom: 6px; font-weight: 600; font-size: 13px; }
+        .form-box input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; }
+        
+        .kasir-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .produk-box, .cart-box { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .produk-list { display: grid; gap: 10px; max-height: 420px; overflow-y: auto; }
+        .produk { border: 1px solid #e2e8f0; padding: 14px; border-radius: 8px; cursor: pointer; background: #f8fafc; transition: all 0.2s; }
+        .produk:hover { background: #f0fdf4; border-color: #34d399; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+        .total-box { margin-top: 20px; border-top: 2px solid #f1f5f9; padding-top: 20px; }
+        .kembalian { display: flex; justify-content: space-between; margin-top: 15px; padding: 12px 15px; background: #f1f5f9; border-radius: 8px; font-weight: 600; }
+        .btn-bayar { width: 100%; padding: 14px; margin-top: 15px; background: #16a34a; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; }
+        
+        .struk { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); align-items: center; justify-content: center; z-index: 100; }
+        .struk.show { display: flex; }
+        .struk-content { background: white; width: 360px; padding: 30px; border-radius: 14px; }
+        .struk-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+
+        /* Responsif untuk layar HP */
+        @media(max-width: 768px) {
+            .login-container { flex-direction: column; overflow-y: auto; }
+            .login-banner { display: none; }
+            .login-form-side { width: 100%; height: 100vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HALAMAN LOGIN DENGAN BANNER GAMBAR -->
+    <div id="loginPage" class="login-container">
+        <div class="login-banner">
+            <h1>Solusi Modern Manajemen Toko Aluminium & Kaca</h1>
+            <p>Kelola inventaris stok, pencatatan kasir , dan laporan transaksi bisnis aluminium Anda dengan lebih cepat, rapi, dan profesional.</p>
+        </div>
+        <div class="login-form-side">
+            <div class="login-box">
+                <div class="login-logo">🏢</div>
+                <h2>BJ Manajemen Toko Aluminium & Kaca</h2>
+                <p class="subtitle"> Management System</p>
+                
+                <label>Username Administrator</label>
+                <input type="text" id="username" placeholder="Masukkan username">
+
+                <label>Password Keamanan</label>
+                <input type="password" id="password" placeholder="Masukkan password">
+
+                <button class="btn-primary" onclick="prosesLogin()" style="width: 100%; margin-top: 25px; padding: 13px;">AKSES SISTEM</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APLIKASI UTAMA -->
+    <div id="appContainer" class="app" style="display: none;">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>BULAN JAYA </h2>
+                <p>Aluminium Edition</p>
+            </div>
+            <div class="sidebar-menu">
+                <button onclick="showPage('dashboard')">📊 Dashboard</button>
+                <button onclick="showPage('barang')">📦 stock barang </button>
+                <button onclick="showPage('tambah')">➕ Input Barang</button>
+                <button onclick="showPage('kasir')">🛒 Kasir </button>
+                <button onclick="showPage('riwayat')">📜 Riwayat Transaksi</button>
+            </div>
+            <button onclick="logout()" class="btn-logout">🚪 Keluar Sistem</button>
+        </aside>
+
+        <main class="content">
+            <section id="dashboard" class="page active">
+                <h2>Dashboard Utama</h2>
+                <p style="color: #64748b; margin-bottom: 25px;">Ringkasan performa toko aluminium hari ini</p>
+                <div class="cards">
+                    <div class="card"><div class="card-icon">📦</div><div><p>Jenis Barang</p><h3 id="totalBarang">0</h3></div></div>
+                    <div class="card"><div class="card-icon">🏗️</div><div><p>Total Stok Unit</p><h3 id="totalStok">0</h3></div></div>
+                    <div class="card"><div class="card-icon">💰</div><div><p>Pendapatan Bersih</p><h3 id="totalPenjualan">Rp 0</h3></div></div>
+                </div>
+            </section>
+
+            <section id="barang" class="page">
+                <div class="page-header">
+                    <div><h2>Inventaris Barang</h2><p style="color: #64748b; font-size: 13px;">Daftar stok produk aluminium</p></div>
+                    <button class="btn-primary" onclick="showPage('tambah')">+ Tambah Barang</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>No</th><th>Kode</th><th>Nama Barang</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr></thead>
+                        <tbody id="tabelBarang"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="tambah" class="page">
+                <h2>Input Barang Baru</h2>
+                <div class="form-box" style="margin-top: 15px;">
+                    <label>Kode Barang / SKU</label><input type="text" id="kodeBarang" placeholder="Contoh: ALM-01">
+                    <label>Nama Barang</label><input type="text" id="namaBarang" placeholder="Contoh: Kusen Aluminium YKK">
+                    <label>Harga Satuan (Rp)</label><input type="number" id="hargaBarang" placeholder="150000">
+                    <label>Jumlah Stok</label><input type="number" id="stokBarang" placeholder="50">
+                    <button class="btn-primary" onclick="tambahBarang()" style="width: 100%; margin-top: 20px;">Simpan ke Inventaris</button>
+                </div>
+            </section>
+
+            <section id="kasir" class="page">
+                <h2>Kasir / Point of Sales</h2>
+                <div class="kasir-layout" style="margin-top: 15px;">
+                    <div class="produk-box">
+                        <h3>Katalog Produk</h3>
+                        <div id="produkKasir" class="produk-list" style="margin-top: 10px;"></div>
+                    </div>
+                    <div class="cart-box">
+                        <h3>Keranjang Belanja</h3>
+                        <div id="keranjang" style="margin-top: 10px;"><p style="color:#94a3b8; text-align:center; padding:20px;">Belum ada item dipilih</p></div>
+                        <div class="total-box">
+                            <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:bold;"><span>Total</span><strong id="totalKasir">Rp 0</strong></div>
+                            <label style="margin-top:10px;">Uang Pembayaran</label><input type="number" id="pembayaran" placeholder="Nominal uang" oninput="hitungKembalian()">
+                            <div class="kembalian"><span>Kembalian</span><strong id="kembalian">Rp 0</strong></div>
+                            <button class="btn-bayar" onclick="prosesPembayaran()">💳 PROSES PEMBAYARAN</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="riwayat" class="page">
+                <h2>Riwayat Transaksi</h2>
+                <div class="table-container" style="margin-top: 20px;">
+                    <table>
+                        <thead><tr><th>No</th><th>Waktu</th><th>Rincian</th><th>Total</th><th>Bayar</th><th>Kembali</th></tr></thead>
+                        <tbody id="tabelRiwayat"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="struk" class="struk">
+        <div class="struk-content">
+            <h2 style="text-align:center;">SMART TOKO</h2>
+            <p style="text-align:center; color:#64748b; font-size:13px;">Struk Resmi Transaksi</p>
+            <hr style="border:none; border-top:1px dashed #cbd5e1; margin:15px 0;">
+            <div id="isiStruk"></div>
+            <hr style="border:none; border-top:1px dashed #cbd5e1; margin:15px 0;">
+            <p>Total: <strong id="strukTotal">Rp 0</strong></p>
+            <p>Bayar: <strong id="strukBayar">Rp 0</strong></p>
+            <p>Kembali: <strong id="strukKembali">Rp 0</strong></p>
+            <button onclick="tutupStruk()" class="btn-primary" style="width: 100%; margin-top: 20px;">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        let defaultBarang = [
+            { kode: "ALM-01", nama: "Kusen Aluminium 4 Inch YKK", harga: 145000, stok: 35 },
+            { kode: "ALM-02", nama: "Pintu Aluminium Spandrel", harga: 850000, stok: 12 },
+            { kode: "ALM-03", nama: "Jendela Casement Putih", harga: 320000, stok: 20 },
+            { kode: "ALM-04", nama: "Etalase Kaca 3 Susun", harga: 1250000, stok: 8 }
+        ];
+
+        let barang = JSON.parse(localStorage.getItem("smart_toko_barang_alm")) || defaultBarang;
+        let riwayatTransaksi = JSON.parse(localStorage.getItem("smart_toko_riwayat_alm")) || [];
+        let totalPenjualan = Number(localStorage.getItem("smart_toko_pendapatan_alm")) || 0;
+        let keranjang = [];
+
+        function prosesLogin() {
+            const user = document.getElementById("username").value.trim();
+            const pass = document.getElementById("password").value.trim();
+
+            if (user === "ahang" && pass === "ahang88") {
+                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("appContainer").style.display = "flex";
+                updateDashboard();
+                tampilkanBarang();
+                tampilkanProdukKasir();
+                tampilkanRiwayat();
+            } else {
+                alert("Username atau Password salah! (Gunakan admin dan 123)");
+            }
+        }
+
+        function logout() {
+            if (confirm("Keluar dari sistem?")) {
+                document.getElementById("loginPage").style.display = "flex";
+                document.getElementById("appContainer").style.display = "none";
+                document.getElementById("username").value = "";
+                document.getElementById("password").value = "";
+            }
+        }
+
+        function simpanData() {
+            localStorage.setItem("smart_toko_barang_alm", JSON.stringify(barang));
+            localStorage.setItem("smart_toko_riwayat_alm", JSON.stringify(riwayatTransaksi));
+            localStorage.setItem("smart_toko_pendapatan_alm", totalPenjualan);
+        }
+
+        function showPage(page) {
+            document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+            document.getElementById(page).classList.add("active");
+            if (page === "dashboard") updateDashboard();
+            if (page === "barang") tampilkanBarang();
+            if (page === "kasir") { tampilkanProdukKasir(); tampilkanKeranjang(); }
+            if (page === "riwayat") tampilkanRiwayat();
+        }
+
+        function rupiah(angka) {
+            return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(angka);
+        }
+
+        function updateDashboard() {
+            document.getElementById("totalBarang").innerText = barang.length;
+            let stok = 0;
+            barang.forEach(item => stok += Number(item.stok));
+            document.getElementById("totalStok").innerText = stok;
+            document.getElementById("totalPenjualan").innerText = rupiah(totalPenjualan);
+        }
+
+        function tambahBarang() {
+            const kode = document.getElementById("kodeBarang").value.trim();
+            const nama = document.getElementById("namaBarang").value.trim();
+            const harga = Number(document.getElementById("hargaBarang").value);
+            const stok = Number(document.getElementById("stokBarang").value);
+
+            if (!kode || !nama || harga <= 0 || stok < 0) {
+                alert("Lengkapi semua data dengan benar!");
+                return;
+            }
+            barang.push({ kode, nama, harga, stok });
+            simpanData();
+            alert("Berhasil disimpan!");
+            document.getElementById("kodeBarang").value = "";
+            document.getElementById("namaBarang").value = "";
+            document.getElementById("hargaBarang").value = "";
+            document.getElementById("stokBarang").value = "";
+            showPage("barang");
+        }
+
+        function tampilkanBarang() {
+            const tabel = document.getElementById("tabelBarang");
+            tabel.innerHTML = "";
+            barang.forEach((item, index) => {
+                tabel.innerHTML += `<tr><td>${index+1}</td><td><strong>${item.kode}</strong></td><td>${item.nama}</td><td>${rupiah(item.harga)}</td><td>${item.stok} unit</td><td><button onclick="hapusBarang(${index})" style="background:#fee2e2; color:#dc2626; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Hapus</button></td></tr>`;
+            });
+        }
+
+        function hapusBarang(index) {
+            if (!confirm("Hapus produk ini?")) return;
+            barang.splice(index, 1);
+            simpanData();
+            tampilkanBarang();
+            updateDashboard();
+        }
+
+        function tampilkanProdukKasir() {
+            const container = document.getElementById("produkKasir");
+            container.innerHTML = "";
+            barang.forEach((item, index) => {
+                container.innerHTML += `<div class="produk" onclick="tambahKeKeranjang(${index})"><div style="font-weight:600;">${item.nama}</div><div style="color:#0284c7;">${rupiah(item.harga)}</div><div style="font-size:12px; color:#64748b;">Stok: ${item.stok}</div></div>`;
+            });
+        }
+
+        function tambahKeKeranjang(index) {
+            const produk = barang[index];
+            if (produk.stok <= 0) { alert("Stok habis!"); return; }
+            let existing = keranjang.find(i => i.kode === produk.kode);
+            if (existing) {
+                if (existing.qty >= produk.stok) { alert("Melebihi stok!"); return; }
+                existing.qty++;
+            } else {
+                keranjang.push({ kode: produk.kode, nama: produk.nama, harga: produk.harga, qty: 1 });
+            }
+            tampilkanKeranjang();
+        }
+
+        function tampilkanKeranjang() {
+            const container = document.getElementById("keranjang");
+            container.innerHTML = "";
+            if (keranjang.length === 0) {
+                container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:20px;">Belum ada item dipilih</p>';
+                document.getElementById("totalKasir").innerText = rupiah(0);
+                return;
+            }
+            keranjang.forEach((item, index) => {
+                container.innerHTML += `<div class="cart-item"><div><div style="font-weight:600;">${item.nama}</div><div style="font-size:12px; color:#64748b;">${rupiah(item.harga)} x ${item.qty}</div></div><div><strong>${rupiah(item.harga * item.qty)}</strong></div></div>`;
+            });
+            hitungTotal();
+        }
+
+        function hitungTotal() {
+            let total = 0;
+            keranjang.forEach(item => total += item.harga * item.qty);
+            document.getElementById("totalKasir").innerText = rupiah(total);
+            hitungKembalian();
+        }
+
+        function hitungKembalian() {
+            let total = 0;
+            keranjang.forEach(item => total += item.harga * item.qty);
+            const bayar = Number(document.getElementById("pembayaran").value) || 0;
+            document.getElementById("kembalian").innerText = rupiah(Math.max(bayar - total, 0));
+        }
+
+        function prosesPembayaran() {
+            if (keranjang.length === 0) { alert("Keranjang kosong!"); return; }
+            let total = 0;
+            keranjang.forEach(item => total += item.harga * item.qty);
+            const bayar = Number(document.getElementById("pembayaran").value) || 0;
+            if (bayar < total) { alert("Uang pembayaran kurang!"); return; }
+            const kembali = bayar - total;
+
+            keranjang.forEach(item => {
+                let p = barang.find(b => b.kode === item.kode);
+                if (p) p.stok -= item.qty;
+            });
+            totalPenjualan += total;
+
+            riwayatTransaksi.unshift({
+                waktu: new Date().toLocaleString("id-ID"),
+                rincian: keranjang.map(i => `${i.nama} (x${i.qty})`).join(", "),
+                total: total, bayar: bayar, kembali: kembali
+            });
+
+            simpanData();
+            buatStruk(total, bayar, kembali);
+            keranjang = [];
+            document.getElementById("pembayaran").value = "";
+            tampilkanKeranjang();
+            tampilkanProdukKasir();
+            tampilkanBarang();
+            updateDashboard();
+            tampilkanRiwayat();
+        }
+
+        function tampilkanRiwayat() {
+            const tabel = document.getElementById("tabelRiwayat");
+            if (!tabel) return;
+            tabel.innerHTML = "";
+            if (riwayatTransaksi.length === 0) {
+                tabel.innerHTML = `<tr><td colspan="6" style="text-align:center">Belum ada riwayat</td></tr>`;
+                return;
+            }
+            riwayatTransaksi.forEach((item, index) => {
+                tabel.innerHTML += `<tr><td>${index+1}</td><td>${item.waktu}</td><td>${item.rincian}</td><td>${rupiah(item.total)}</td><td>${rupiah(item.bayar)}</td><td>${rupiah(item.kembali)}</td></tr>`;
+            });
+        }
+
+        function buatStruk(total, bayar, kembali) {
+            const isi = document.getElementById("isiStruk");
+            isi.innerHTML = "";
+            keranjang.forEach(i => {
+                isi.innerHTML += `<div class="struk-item"><span>${i.nama} x${i.qty}</span><span>${rupiah(i.harga * i.qty)}</span></div>`;
+            });
+            document.getElementById("strukTotal").innerText = rupiah(total);
+            document.getElementById("strukBayar").innerText = rupiah(bayar);
+            document.getElementById("strukKembali").innerText = rupiah(kembali);
+            document.getElementById("struk").classList.add("show");
+        }
+
+        function tutupStruk() {
+            document.getElementById("struk").classList.remove("show");
+        }
+    </script>
+</body>
+</html>
